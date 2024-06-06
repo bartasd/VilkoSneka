@@ -1,1 +1,0 @@
-{"version":3,"file":"static/css/main.0902d95c.css","mappings":"AAAA,YAEE,QAAS,CACT,SACF,CCJA,WACE,iBAAoB,CACpB,2FACF","sources":["index.css","App.css"],"sourcesContent":["body,\nbody * {\n  margin: 0;\n  padding: 0;\n}\n","@font-face {\r\n  font-family: \"Chevy\";\r\n  src: url(./fonts/Chewy-Regular.ttf) format(\"truetype\");\r\n}\r\n"],"names":[],"sourceRoot":""}
