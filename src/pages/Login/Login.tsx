@@ -1,18 +1,26 @@
 import { LoginContainer } from "./LoginContainer";
-import logo from "../images/logo.png";
+import logo from "../../images/logo.png";
 // ----- REDUX STUFF ----------
 import { useDispatch, useSelector } from "react-redux";
-import { LoginAttemptState } from "../types/reducerTypes";
+import { LoginAttemptState } from "../../types/reducerTypes";
 // ----- useRef STUFF ---------
 import { useRef } from "react";
+// ----- SOME ROUTING ---------
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  // NAV
+  const navigate = useNavigate();
+
+  // REDUX STORE STATES
   const isLoginAttempt = useSelector(
     (state: LoginAttemptState) => state.loginAttempt
   );
   const isRegisterAttempt = useSelector(
     (state: LoginAttemptState) => state.registerAttempt
   );
+
+  // DISPATCH STATE
   const dispatch = useDispatch();
   const changeAttempts = (attempt: string): void => {
     if (attempt === "login") {
@@ -37,6 +45,7 @@ const Login = () => {
     }
   };
 
+  // SOME REFS
   const loginUser = useRef<HTMLInputElement>(null);
   const loginPass = useRef<HTMLInputElement>(null);
   const registerUser = useRef<HTMLInputElement>(null);
@@ -60,7 +69,9 @@ const Login = () => {
         <div>
           <input ref={loginUser} type="text" placeholder="Slapyvardis" />
           <input ref={loginPass} type="text" placeholder="Slaptažodis" />
-          <button type="button">Prisijungti</button>
+          <button type="button" onClick={() => navigate("/messenger")}>
+            Prisijungti
+          </button>
           <button type="button" onClick={() => changeAttempts("loginClose")}>
             Atgal
           </button>

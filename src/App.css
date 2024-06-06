@@ -2,3 +2,13 @@
   font-family: "Chevy";
   src: url(./fonts/Chewy-Regular.ttf) format("truetype");
 }
+
+@font-face {
+  font-family: "CrimsonPro";
+  src: url(./fonts/CrimsonPro-VariableFont_wght.ttf) format("truetype");
+}
+@font-face {
+  font-family: "CrimsonPro";
+  src: url(./fonts/CrimsonPro-Italic-VariableFont_wght.ttf) format("truetype");
+  font-style: italic;
+}
