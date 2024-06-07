@@ -7,6 +7,10 @@ import { LoginAttemptState } from "../../types/reducerTypes";
 import { useRef } from "react";
 // ----- SOME ROUTING ---------
 import { useNavigate } from "react-router-dom";
+// ----- SOME IMPORTS ---------
+import axios from "axios";
+// ----- CONSTANTS -----------
+import { userCreateUrl } from "../../constants/back_constants";
 
 const Login = () => {
   // NAV
@@ -31,25 +35,46 @@ const Login = () => {
     }
     if (attempt === "loginClose") {
       dispatch({ type: "loginAttempt" });
-      if (loginUser.current && loginPass.current) {
-        loginUser.current.value = "";
-        loginPass.current.value = "";
+      if (lUser.current && lPass.current) {
+        lUser.current.value = "";
+        lPass.current.value = "";
       }
     }
     if (attempt === "registerClose") {
       dispatch({ type: "registerAttempt" });
-      if (registerUser.current && registerPass.current) {
-        registerUser.current.value = "";
-        registerPass.current.value = "";
+      if (rUser.current && rPass.current) {
+        rUser.current.value = "";
+        rPass.current.value = "";
       }
     }
   };
 
   // SOME REFS
-  const loginUser = useRef<HTMLInputElement>(null);
-  const loginPass = useRef<HTMLInputElement>(null);
-  const registerUser = useRef<HTMLInputElement>(null);
-  const registerPass = useRef<HTMLInputElement>(null);
+  const lUser = useRef<HTMLInputElement>(null);
+  const lPass = useRef<HTMLInputElement>(null);
+  const rUser = useRef<HTMLInputElement>(null);
+  const rPass = useRef<HTMLInputElement>(null);
+
+  // SOME ACTIONS
+
+  const registerUser = async () => {
+    const user = rUser.current?.value;
+    const pass = rPass.current?.value;
+    if (user && pass) {
+      console.log(`user: ${user}, pass: ${pass}`);
+      try {
+        const response = await axios.post(userCreateUrl, {
+          username: user,
+          password: pass,
+        });
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      // notify user to enter some values
+    }
+  };
 
   return (
     <LoginContainer>
@@ -67,8 +92,8 @@ const Login = () => {
         }}
       >
         <div>
-          <input ref={loginUser} type="text" placeholder="Slapyvardis" />
-          <input ref={loginPass} type="text" placeholder="Slaptažodis" />
+          <input ref={lUser} type="text" placeholder="Slapyvardis" />
+          <input ref={lPass} type="text" placeholder="Slaptažodis" />
           <button type="button" onClick={() => navigate("/messenger")}>
             Prisijungti
           </button>
@@ -87,9 +112,11 @@ const Login = () => {
         </div>
 
         <div>
-          <input ref={registerUser} type="text" placeholder="Slapyvardis" />
-          <input ref={registerPass} type="text" placeholder="Slaptažodis" />
-          <button type="button">Registruotis</button>
+          <input ref={rUser} type="text" placeholder="Slapyvardis" />
+          <input ref={rPass} type="text" placeholder="Slaptažodis" />
+          <button type="button" onClick={registerUser}>
+            Registruotis
+          </button>
           <button type="button" onClick={() => changeAttempts("registerClose")}>
             Atgal
           </button>

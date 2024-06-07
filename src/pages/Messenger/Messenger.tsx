@@ -1,6 +1,9 @@
 import MessengerContainer from "./MessengerContainer";
+import { useNavigate } from "react-router-dom";
 
 const Messenger = () => {
+  const navigate = useNavigate();
+
   return (
     <MessengerContainer>
       <div className="chat-cont">
@@ -80,7 +83,9 @@ const Messenger = () => {
             // append offline users here;
             // think of how position them; */}
         </div>
-        <button type="button">Atsijungti</button>
+        <button type="button" onClick={() => navigate("/VilkoSneka")}>
+          Atsijungti
+        </button>
       </div>
     </MessengerContainer>
   );
