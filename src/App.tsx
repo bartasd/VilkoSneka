@@ -8,7 +8,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/VilkoSneka" element={<Login />} />
-        <Route path="/messenger" element={<Messenger />} />
+        <Route path="/VilkoSneka/messenger" element={<Messenger />} />
       </Routes>
     </BrowserRouter>
   );
