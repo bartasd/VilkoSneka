@@ -1,10 +1,11 @@
-interface ActionType {
-  type: string;
-}
-
 interface LoginAttemptState {
   loginAttempt: boolean;
   registerAttempt: boolean;
 }
 
-export type { ActionType, LoginAttemptState };
+interface UserState {
+  user: string;
+  // some other logic: roles, picture and so on....
+}
+
+export type { LoginAttemptState, UserState };
