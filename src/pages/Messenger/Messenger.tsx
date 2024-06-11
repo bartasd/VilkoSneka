@@ -1,18 +1,33 @@
 import MessengerContainer from "./MessengerContainer";
 import { useNavigate } from "react-router-dom";
-import { KeyboardEvent, useEffect, useRef } from "react";
+import { KeyboardEvent, useEffect, useRef, useState } from "react";
 import socket from "../../sockets/socket";
-import { messageCreateUrl } from "../../constants/back_constants";
+import {
+  ServerData,
+  ResponseData,
+  MessageType,
+} from "../../types/reducerTypes";
+import {
+  getMessagesUrl,
+  messageCreateUrl,
+} from "../../constants/back_constants";
 import axios from "axios";
 
-const token = localStorage.getItem("VS_token");
-
 const Messenger = () => {
+  const [messages, setMessages] = useState<MessageType[]>([]); // perleisti i redux
+
   const navigate = useNavigate();
 
   const logout = () => {
     navigate("/VilkoSneka");
   };
+
+  const [magic, setMagic] = useState(0);
+
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  const token = localStorage.getItem("VS_token");
+  const userData = JSON.parse(atob((token as string).split(".")[1]));
+  const user = userData.username;
 
   const saveMessage = async (message: string) => {
     try {
@@ -31,7 +46,24 @@ const Messenger = () => {
     }
   };
 
-  const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  const getMessages = async () => {
+    const response: ResponseData = await axios.get(getMessagesUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data: ServerData[] = response.data;
+
+    setMessages(
+      data.map((item) => ({
+        username: item.username,
+        message: item.message,
+        timestamp: item.timestamp,
+        timestampDate: new Date(item.timestamp),
+      }))
+    );
+  };
 
   const enterMessage = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     let message = "";
@@ -51,12 +83,19 @@ const Messenger = () => {
     });
 
     socket.on("message", (msg) => {
-      // const item = document.createElement("li");
-      // item.textContent = msg;
-      // messages.appendChild(item);
-      // window.scrollTo(0, document.body.scrollHeight);
       console.log(msg);
+      setMessages((old) => [
+        ...old,
+        {
+          username: msg.user,
+          message: msg.message,
+          timestamp: msg.timestamp,
+          timestampDate: new Date(msg.timestamp),
+        },
+      ]);
+      setMagic((old) => old + 1);
     });
+
     // Clean up on component unmount
     return () => {
       socket.off("connect");
@@ -64,76 +103,22 @@ const Messenger = () => {
     };
   }, []);
 
+  useEffect(() => {
+    getMessages();
+  }, []);
+
   return (
     <MessengerContainer>
       <div className="chat-cont">
         <div className="chat">
-          {/* // append p messages here
-            // users messages shows to the right;
-            // other messages shows to the left; */}
-          <p className="isUser">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Magni,
-            distinctio.
-          </p>
-          <p className="isUser">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur
-            cumque placeat iste dolor commodi nulla!
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sunt
-            eveniet fugit quibusdam animi sequi!
-          </p>
-          <p className="isUser">Lorem ipsum dolor sit.</p>
-          <p className="isUser">Lorem ipsum dolor sit.</p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nisi,
-            quisquam ab expedita laboriosam eaque at omnis dolor.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nisi,
-            quisquam ab expedita laboriosam eaque at omnis dolor.
-          </p>
-          <p className="isUser">
-            Lorem ipsum dolor sit amet consectetur adipisicing.
-          </p>
-          <p>Lorem, ipsum dolor.</p>
-          <p className="isUser">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-          </p>
-          <p className="isUser">Lorem ipsum dolor sit.</p>
-          <p className="isUser">Lorem ipsum dolor sit.</p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nisi,
-            quisquam ab expedita laboriosam eaque at omnis dolor.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nisi,
-            quisquam ab expedita laboriosam eaque at omnis dolor.
-          </p>
-          <p className="isUser">
-            Lorem ipsum dolor sit amet consectetur adipisicing.
-          </p>
-          <p>Lorem, ipsum dolor.</p>
-          <p className="isUser">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-          </p>
-          <p className="isUser">Lorem ipsum dolor sit.</p>
-          <p className="isUser">Lorem ipsum dolor sit.</p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nisi,
-            quisquam ab expedita laboriosam eaque at omnis dolor.
-          </p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nisi,
-            quisquam ab expedita laboriosam eaque at omnis dolor.
-          </p>
-          <p className="isUser">
-            Lorem ipsum dolor sit amet consectetur adipisicing.
-          </p>
-          <p>Lorem, ipsum dolor.</p>
-          <p className="isUser">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-          </p>
+          {messages.map((message: MessageType, index: number) => (
+            <p
+              key={index}
+              className={message.username === user ? "isUser" : ""}
+            >
+              {message.message}
+            </p>
+          ))}
         </div>
         <textarea ref={inputRef} onKeyDown={enterMessage} />
       </div>
