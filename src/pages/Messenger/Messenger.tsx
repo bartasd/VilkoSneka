@@ -25,7 +25,7 @@ const Messenger = () => {
   const [magic, setMagic] = useState(0);
 
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
-  const token = localStorage.getItem("VS_token");
+  const token = sessionStorage.getItem("VS_token");
   const userData = JSON.parse(atob((token as string).split(".")[1]));
   const user = userData.username;
 

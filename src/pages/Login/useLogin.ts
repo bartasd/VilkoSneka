@@ -33,7 +33,7 @@ export const useLogin = () => {
   // DISPATCH STATE
   const changeAttempts = async (attempt: string) => {
     if (attempt === "login") {
-      const token = localStorage.getItem("VS_token");
+      const token = sessionStorage.getItem("VS_token");
       if (token) {
         // check my status
         const validate = await checkLogin(token);
@@ -115,7 +115,7 @@ export const useLogin = () => {
         });
         if (response.status === 201) {
           const token = response.data.access_token;
-          localStorage.setItem("VS_token", token);
+          sessionStorage.setItem("VS_token", token);
           const validate = await checkLogin(token);
 
           if (validate) {
